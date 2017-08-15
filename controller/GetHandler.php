@@ -149,28 +149,28 @@ class GetHandler extends Handler{
     // }
 
 
-    public function filter()
-    {
-        $args = array(
-                    'product_id'   => FILTER_SANITIZE_ENCODED,//Sanitizing过滤器
-                    'component'    => array('filter'    => FILTER_VALIDATE_INT,//
-                                            'flags'     => FILTER_REQUIRE_ARRAY, 
-                                            'options'   => array('min_range' => 1, 'max_range' => 10)
-                                        ),
-                    'versions'     => FILTER_SANITIZE_ENCODED,
-                    'doesnotexist' => FILTER_VALIDATE_INT,
-                    'testscalar'   => array(
-                                            'filter' => FILTER_VALIDATE_INT,
-                                            'flags'  => FILTER_REQUIRE_SCALAR,
-                                        ),
-                    'testarray'    => array(
-                                            'filter' => FILTER_VALIDATE_INT,
-                                            'flags'  => FILTER_REQUIRE_ARRAY,
-                                        )
+    // public function filter()
+    // {
+    //     $args = array(
+    //                 'product_id'   => FILTER_SANITIZE_ENCODED,//Sanitizing过滤器
+    //                 'component'    => array('filter'    => FILTER_VALIDATE_INT,//
+    //                                         'flags'     => FILTER_REQUIRE_ARRAY, 
+    //                                         'options'   => array('min_range' => 1, 'max_range' => 10)
+    //                                     ),
+    //                 'versions'     => FILTER_SANITIZE_ENCODED,
+    //                 'doesnotexist' => FILTER_VALIDATE_INT,
+    //                 'testscalar'   => array(
+    //                                         'filter' => FILTER_VALIDATE_INT,
+    //                                         'flags'  => FILTER_REQUIRE_SCALAR,
+    //                                     ),
+    //                 'testarray'    => array(
+    //                                         'filter' => FILTER_VALIDATE_INT,
+    //                                         'flags'  => FILTER_REQUIRE_ARRAY,
+    //                                     )
 
-        );
+    //     );
 
-        $myinputs = filter_input_array(INPUT_POST, $args);
-    }
+    //     $myinputs = filter_input_array(INPUT_POST, $args);
+    // }
 
 }
