@@ -1,5 +1,5 @@
 <?php
-defined('PATH') OR exit('invalid path');
+// defined('PATH') OR exit('invalid path');
 /**
 Logger::DEBUG (100): Detailed debug information.详细的Debug信息
 
@@ -19,16 +19,16 @@ Logger::EMERGENCY (600): Emergency: system is unusable
 **/
 defined('LOG_PATH') OR define('LOG_PATH',dirname(__FILE__).'/../log/');
 
-defined('DSN') OR define('DSN','mysql:host=localhost;dbname=test_1;charset=utf8');
+defined('DSN') OR define('DSN','mysql:host=localhost;dbname=recruit;charset=utf8');
 defined('PORT') OR define('PORT',3306);
 defined('DB_USER') OR define('DB_USER','root');
 defined('DB_PWD') OR define('DB_PWD','root');
 
 defined('MAIL_SERVER') OR define('MAIL_SERVER','smtp.163.com');
-defined('MAIL_USER') OR define('MAIL_USER','');
-defined('MAIL_PWD') OR define('MAIL_PWD','');
-defined('MAIL_FROM') OR define('MAIL_FROM',array(''=>'xinda'));
-defined('MAIL_TO') OR define('MAIL_TO',array(''=>'xinda'));
+defined('MAIL_USER') OR define('MAIL_USER','m15116391775@163.com');
+defined('MAIL_PWD') OR define('MAIL_PWD','csu0902150407');
+defined('MAIL_FROM') OR define('MAIL_FROM',array('m15116391775@163.com'=>'xinda'));
+defined('MAIL_TO') OR define('MAIL_TO',array('1061889812@qq.com'=>'xinda'));
 
 defined('SALT') OR define('SALT','xinda1837');
 defined('SESSION_EXPIRE_TIME') OR define('SESSION_EXPIRE_TIME','600');//s

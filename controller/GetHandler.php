@@ -25,6 +25,8 @@ class GetHandler extends Handler{
 
     protected $log;
 
+
+
     // protected $pdo;
 
     public function construct($action=null,$resource)
@@ -53,33 +55,56 @@ class GetHandler extends Handler{
         }
     }
 
-
-    public function login($openid = null)
+    public function index()
     {
-        //if expire 
-        try{
-            $selectStatement = $this->pdo->select()->from('user')->where('openid','=',$_SESSION['openid']);
-            $stmt = $selectStatement->execute();
-            $user = $stmt->fetch();
-
-            $selectStatement = $this->pdo->select()->from('resume')->where('openid','=',$_SESSION['openid']);
-            $stmt = $selectStatement->execute();
-            $resume = $stmt->fetchall();//array
-
-        }catch(\PDOException $e){   
-            header('location:404');
-        }
-
-        if(false === $user){
-            header('location:');//填报个人信息
-        }elseif(empty($resume)){
-            header('location:');//填写志愿信息
-        }else{
-            header('location:');
-            print(json_encode(array_merge($data)));//合并并且返回
-        }
-        
+        header('location:http://localhost/recruit/views/new_user_info.html');
     }
+
+
+    public function userInfo()
+    {
+        try{
+            // $selectStatement = $this->pdo->select()->from('user')->where('openid','=',$_SESSION['openid']);
+            $selectStatement = $this->pdo->select()->from('userInfo')->where('name','=','大');
+            $stmt = $selectStatement->execute();
+            $userInfo = $stmt->fetch();
+        }catch(\PDOException $e){
+            exit($this->ajaxResponse(0,$e->getMessage()));
+        }
+        if(false === $userInfo){
+            exit($this->ajaxResponse(0,'db is null'));
+        }else{
+            exit($this->ajaxResponse(1,$userInfo));
+        }
+    }
+
+
+    // public function login($openid = null)
+    // {
+    //     //if expire 
+    //     try{
+    //         $selectStatement = $this->pdo->select()->from('user')->where('openid','=',$_SESSION['openid']);
+    //         $stmt = $selectStatement->execute();
+    //         $user = $stmt->fetch();
+
+    //         $selectStatement = $this->pdo->select()->from('resume')->where('openid','=',$_SESSION['openid']);
+    //         $stmt = $selectStatement->execute();
+    //         $resume = $stmt->fetchall();//array
+
+    //     }catch(\PDOException $e){   
+    //         header('location:404');
+    //     }
+
+    //     if(false === $user){
+    //         header('location:');//填报个人信息
+    //     }elseif(empty($resume)){
+    //         header('location:');//填写志愿信息
+    //     }else{
+    //         header('location:');
+    //         print(json_encode(array_merge($data)));//合并并且返回
+    //     }
+        
+    // }
 
     public function manage()
     {
@@ -88,16 +113,34 @@ class GetHandler extends Handler{
                 header('location:403forbidden');
         }
         try{
-            $selectStatement = $this->pdo->select()->from('resume')->where('organization','=',$_SESSION['organization']); 
+            $selectStatement=$this->pdo->select()->from('department')->where('organization','=',$_SESSION['organization']);
             $stmt = $selectStatement->execute();
-            $resume = $stmt->fetchall();//array
+            $departs = $stmt->fetchall();
+            $row = array();
+            $row['sum']=0;
+            foreach ($departs as $value) {
+
+                $selectStatement = $this->pdo->select(array('COUNT(*)'))->from('resume')->where('organization','=',$_SESSION['organization'])->where('depart1','=',$value);
+                $stmt = $selectStatement->execute();
+                $depart1Count = $stmt->rowCount();
+
+                $selectStatement = $this->pdo->select(array('COUNT(*)'))->from('resume')->where('organization','=',$_SESSION['organization'])->where('depart2','=',$value);
+                $stmt = $selectStatement->execute();
+                $depart2Count = $stmt->rowCount();
+
+                $row[$value]['depart1'] = $depart1Count;
+                $row[$value]['depart2'] = $depart2Count;
+                $row[$value]['sum'] = $depart1Count+$depart2Count;
+
+                $row['sum'] += $row[$value]['sum'];
+
+            } 
+
         }catch(\PDOException $e){
-            header('location:500');
+            exit($this->ajaxResponse(0,$e->getMessage()));
         }
 
-        header('location:');
-        print(json_encode($resume));
-
+        exit($this->ajaxResponse(1,$row));
     }
 
 
@@ -107,7 +150,7 @@ class GetHandler extends Handler{
                 header('location:403forbidden');
         }
         try{
-            $selectStatement = $this->pdo->select()->from('user')->where('organization','=',$_SESSION['organization']);
+            $selectStatement = $this->pdo->select()->from('userInfo')->where('organization','=',$_SESSION['organization'])->groupBy('depart1');
             $stmt = $selectStatement->execute();
             $user = $stmt->fetchall();
 
@@ -116,7 +159,7 @@ class GetHandler extends Handler{
             $resume = $stmt->fetchall();//array
 
         }catch(\PDOException $e){   
-            header('location:500');
+            header('location:500');  
         }     
 
         if(empty($user) or empty($resume)){

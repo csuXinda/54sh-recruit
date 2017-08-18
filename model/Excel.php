@@ -6,7 +6,7 @@
 
 namespace xinda\recruit\model;
 
-defined(PATH) OR exit('invalid path');
+defined('PATH') OR exit('invalid path');
 
 require_once '../vendor/autoload.php';
 require_once '../config/config.php';

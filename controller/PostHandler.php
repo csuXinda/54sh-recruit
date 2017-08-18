@@ -6,11 +6,13 @@ defined('PATH') OR exit('invalid path');
 require_once dirname(__FILE__)."/../model/DB.php";
 require_once dirname(__FILE__)."/../model/Log.php";
 require_once dirname(__FILE__)."/../config/config.php";
+require_once dirname(__FILE__)."/Handler.php";
 
 use xinda\recruit\model\DB;
 use xinda\recruit\model\Log;
+use xinda\recruit\controller\Handler;
 
-class PutHandler extends Handler{
+class PostHandler extends Handler{
 
     // protected $resource;
 
@@ -24,6 +26,7 @@ class PutHandler extends Handler{
 
     protected $log;
 
+
     // protected $pdo;
 
     // protected $response = array(
@@ -35,7 +38,7 @@ class PutHandler extends Handler{
     {
         parent::construct($action,$resource);
 
-        $this->log      = new Log('PutChannel');
+        $this->log      = new Log('PostChannel');
         // $this->action   = $action;
         // $this->resource = $resource;
         
@@ -47,23 +50,21 @@ class PutHandler extends Handler{
      * @return json
      */
 
-    public function put()
+    public function receive()
     { 
         $this->filterPost = $this->filter();
-
         if (is_array($this->filterPost)) {
             foreach ($this->filterPost as $key => $value) {
                 //null or false
-                if (!$value) {
-                    return $this->ajaxResponse(0,$key);//某一项false或者null
+                if (false === $value or null == trim($value) ) {
+                    exit($this->ajaxResponse(0,$key));//某一项false或者null
                 }
 
             }
         } else {
-            return $this->ajaxResponse(0,$this->source); //请求资源不存在
+            exit($this->ajaxResponse(0,$this->resource)); //请求资源不存在
         }
-
-        $this->filterPost['openid'] = $_SESSION['openid'];
+        // $this->filterPost['openid'] = $_SESSION['openid'];
         $this->filterPost['time']   = time();
         /**
          * 插入数据库
@@ -71,43 +72,37 @@ class PutHandler extends Handler{
         if ($this->action == 'insert') {
             try {
                 $insertStatement = $this->pdo->insert(array_keys($this->filterPost))
-                    ->into($this->source)
+                    ->into($this->resource)
                     ->values(array_values($this->filterPost));
                 $insertId = $insertStatement->execute();
             } catch (\PDOException $e) {
-                return $this->ajaxResponse(0,$e->getMessage());
+
+                exit($this->ajaxResponse(0,$e->getMessage()));
+                
             }
 
-            return $this->ajaxResponse();
+            exit($this->ajaxResponse());
 
         } elseif($this->action == 'update') {
             try {
-                $updateStatement = $pdo->update($this->filterPost)
-                    ->table($this->source)
-                    ->where('openid', '=', $this->filterPost['openid']);
+                $updateStatement = $this->pdo->update($this->filterPost)
+                    ->table($this->resource)
+                    // ->where('openid', '=', $this->filterPost['openid']);
+                    ->where('name','=','大');
                 $affectedRows = $updateStatement->execute();
             }catch(\PDOException $e) {
-                return $this->ajaxResponse(0,$e->getMessage());
+                exit($this->ajaxResponse(0,$e->getMessage()));
             }
 
-            return $this->ajaxResponse();
+            exit($this->ajaxResponse());
 
         }else{
-            return $this->ajaxResponse(0,'invalid action');
+            exit($this->ajaxResponse(0,'invalid action'));
 
         }
 
     }
 
-    public function insert()
-    {
-
-    }
-
-    public function update()
-    {
-
-    }
 
     private function ajaxResponse($status=1,$message=null,$type=1)
     {
@@ -124,10 +119,15 @@ class PutHandler extends Handler{
      * 过滤检验post数据
      * @return array 过滤后的数据
      */
-    public function filter(): array
+    public function filter()
     {
         $args = $this->getFilter($this->resource);
-        return !$args ?? filter_input_array(INPUT_POST, $args);
+        if(!is_array($args)){
+            return null;
+        }else{
+            return filter_input_array(INPUT_POST, $args);
+        }
+
     }
 
     /**
@@ -135,26 +135,21 @@ class PutHandler extends Handler{
      * @param  string $args 过滤器名称
      * @return array       过滤器
      */
-    public function getFilter($args): array
+    public function getFilter($resource)
     {
         $options = array(
-            'user'   => array(
-                'product_id' => FILTER_SANITIZE_ENCODED, //Sanitizing过滤器
+            'userInfo'   => array(
                 'name'       => array(
                     'filter'  => FILTER_VALIDATE_REGEXP, //檢驗器
-                    'options' => array('regexp' => '/^[\u4e00-\u9fa5]+(·[\u4e00-\u9fa5]+)*$/'), //匹配中文（含少数民族）
+                    'options' => array('regexp' => '/^[\x80-\xff]+(·[\x80-\xff]+)*$/'), //匹配中文（含少数民族）
                 ),
                 'college'    => array(
                     'filter'  => FILTER_VALIDATE_REGEXP, //檢驗器
-                    'options' => array('regexp' => '/^[\u4e00-\u9fa5]+/'), //匹配中文（含少数民族）
+                    'options' => array('regexp' => '/^[\x80-\xff]+/'), //匹配中文（含少数民族）
                 ),
                 'class'      => FILTER_SANITIZE_SPECIAL_CHARS,
                 'born'       => FILTER_SANITIZE_NUMBER_INT,
-                'sex'        => array(
-                    'filter'  => FILTER_VALIDATE_REGEXP,
-                    'options' => array('regexp' => '/[\u4e00-\u9fa5]/'),
-
-                ),
+                'sex'        => FILTER_SANITIZE_NUMBER_INT,
                 'student_id' => array(
                     'filter'  => FILTER_VALIDATE_REGEXP,
                     'options' => array('regexp' => '/\d{7,12}/'),
@@ -168,11 +163,11 @@ class PutHandler extends Handler{
             'resume' => array(
                 'organization' => array(
                     'filter'  => FILTER_VALIDATE_REGEXP, //檢驗器
-                    'options' => array('regexp' => '/^[\u4e00-\u9fa5]+/'), //匹配中文
+                    'options' => array('regexp' => '/^[\x80-\xff]+/'), //匹配中文
                 ), //Sanitizing过滤器
                 'department'   => array(
                     'filter'  => FILTER_VALIDATE_REGEXP, //檢驗器
-                    'options' => array('regexp' => '/^[\u4e00-\u9fa5]+/'), //匹配中文
+                    'options' => array('regexp' => '/^[\x80-\xff]+/'), //匹配中文
                 ),
                 'introduce'    => FILTER_SANITIZE_SPECIAL_CHARS,
             ),
@@ -180,12 +175,11 @@ class PutHandler extends Handler{
         );
 
         foreach ($options as $key => $value) {
-            if ($args == $key) {
+            if ($resource == $key) {
                 return $value;
             }
 
         }
-
         return null;
     }
 

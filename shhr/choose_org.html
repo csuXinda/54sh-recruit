@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="theme-color" content="#03a9f4">
+    <meta name="description" content="由升华网提供的中南大学社团招新平台">
+    <meta name="author" content="中南小团子">
+    <meta name="keywords" content="中南大学,升华网,招新">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link rel="stylesheet" type="text/css" href="asset/css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="asset/css/shhr.css" />
+</head>
+<body style="max-width: 600px;margin:0 auto">
+<header class="aui-bar aui-bar-nav">
+    <a class="aui-pull-left aui-btn" onclick="back()">
+        <span class="aui-iconfont aui-icon-left"></span>
+    </a>
+    <div class="aui-title">添加记录</div>
+</header>
+<div class="aui-content aui-margin-t-15 aui-margin-l-5 aui-margin-r-5">
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">应聘组织</li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        选择组织
+                    </div>
+                    <div class="aui-list-item-input">
+                        <select tapmode onchange="descript(this)" name="org" id="org">
+                            <option value="">请选择一个组织</option>
+                            <option value="升华网">升华网</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item descript" id="org_descript" style="min-height: 0;height: 0">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        组织介绍
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea id="org_descript_content" placeholder="组织介绍" disabled readonly></textarea>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="aui-content aui-margin-t-15 aui-margin-l-5 aui-margin-r-5">
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">应聘部门一</li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        选择部门
+                    </div>
+                    <div class="aui-list-item-input">
+                        <select tapmode onchange="descript(this)" disabled name="depart1" id="depart1">
+                            <option value=''>请选择一个部门</option>
+                            <option value="网络部">网络部</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item descript" id="depart1_descript" style="min-height: 0;height: 0">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        部门介绍
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea id="depart1_descript_content" placeholder="部门介绍" disabled readonly></textarea>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="aui-content aui-margin-t-15 aui-margin-l-5 aui-margin-r-5">
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">应聘部门二</li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        选择部门
+                    </div>
+                    <div class="aui-list-item-input">
+                        <select tapmode onchange="descript(this)" disabled name="depart2" id="depart2">
+                            <option value="">请选择一个部门</option>
+                            <option value="网络部">网络部</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item descript" id="depart2_descript" style="min-height: 0;height: 0">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        部门介绍
+                    </div>
+                    <div class="aui-list-item-input">
+                        <textarea id="depart2_descript_content" placeholder="组织介绍" disabled readonly></textarea>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="aui-content aui-margin-t-15 aui-margin-l-5 aui-margin-r-5">
+    <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-header">个人简介</li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-input">
+                        <textarea tapmode id="introduce" placeholder="请简单介绍你自己..."></textarea>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="aui-content-padded">
+    <div class="aui-btn aui-btn-block">请先填写好每一项</div>
+</div>
+<script type="text/javascript" src="asset/script/zepto.min.js"></script>
+<script src="asset/script/api.js"></script>
+<script src="asset/script/aui-dialog.js"></script>
+<script>
+    var descrpt_url='';//组织或部门介绍的地址
+    var org_val=$('#org').val();
+    function descript(elem) {
+        elem=$(elem);
+        if(name=elem.val()){
+            if (elem.attr('id')=='org')
+                $('#depart1,#depart2').removeAttr('disabled');
+            $.get(descrpt_url,name,function (ret,status) {
+                if(status=='success'){
+                    $('#'+elem.attr('id')+'_descript_content').html(ret);
+                    $('#'+elem.attr('id')+'_descript').animate({height:'80px'});
+                }
+            });
+        }else{
+            $('#'+elem.attr('id')+'_descript').animate({height:0});
+            if (elem.attr('id')=='org')
+                $('#depart1,#depart2').attr('disabled','disabled');
+        }
+    }
+    function back() {
+        if (org_val){
+            var dialog = new auiDialog({});
+            dialog.alert({
+                title:"提示",
+                msg:'退出后表单内容将不保留,是否确定',
+                buttons:['取消','确定']
+            },function(ret){
+                if(ret.buttonIndex==2)
+                    window.history.back();
+            })
+        }else
+            window.history.back();
+    }
+    apiready = function(){
+        api.parseTapmode();
+    };
+</script>
+</body>
+</html>

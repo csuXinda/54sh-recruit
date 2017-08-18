@@ -1,4 +1,6 @@
 <?php
-
-$a = is_array(json_encode(['a'=>1]));
-var_dump($a);
+$a=' ';
+if(null==0)
+    echo 1,PHP_EOL;
+else
+    echo 0,PHP_EOL;

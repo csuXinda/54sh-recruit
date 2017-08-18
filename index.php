@@ -55,22 +55,23 @@ session_set_cookie_params(SESSION_EXPIRE_TIME);
 session_start();
 
 
-/**
- * 防止会话劫持
- * @var [type]
- */
-$token = md5(strval(date('h').SALT));
+// /**
+//  * 防止会话劫持
+//  * @var [type]
+//  */
+// $token = md5(strval(date('h').SALT));
 
-/**
- * $_REQUEST默认情况下包含了 $_GET，$_POST 和 $_COOKIE 的数组 ,用于收集HTML表单提交的数据。
- */
-if(!isset($_REQUEST['token']) or $_REQUEST['token'] != $token){
-    http_response_code(405);
-    exit();
-}
+// /**
+//  * $_REQUEST默认情况下包含了 $_GET，$_POST 和 $_COOKIE 的数组 ,用于收集HTML表单提交的数据。
+//  */
+// if(!isset($_REQUEST['token']) or $_REQUEST['toke  n'] != $token){
+//     http_response_code(403);
+//     exit();
+// }
 
-$_SESSION['token'] = $token;
-output_add_rewrite_var('token', $token);//相当于在表单里添加了一个hidden的key => value
+// $_SESSION['token'] = $token;
+// output_add_rewrite_var('token', $token);//相当于在表单里添加了一个hidden的key => value
+
 
 
 /**
@@ -81,7 +82,7 @@ if(!isset($_SESSION['generated']) or $_SESSION['generated']<(time()-30)){
     $_SESSION['generated'] = time();
 }
 
-
+/**
 //设置session
 if(!isset($_SESSION['openid'])){
     $openid = '';//通过code获取openid
@@ -91,6 +92,7 @@ if(!isset($_SESSION['openid'])){
     }
     $_SESSION['openid'] = $openid;
 }
+**/
 
 
 
@@ -115,7 +117,7 @@ if(empty($resource)){
 
 // echo $resource,PHP_EOL;
 //只处理合法资源
-$resources = ['user','resume','login','manage','excel'];//available /put to the config
+$resources = ['user','resume','userInfo','manage','excel','index'];//available /put to the config
 if(!in_array($resource, $resources)){
     http_response_code(404);
     exit();
@@ -127,7 +129,7 @@ $admin = ['manage','excel'];
 $method = strtolower($_SERVER['REQUEST_METHOD']);
 switch ($method) {
     case 'get':
-        echo "get",PHP_EOL;
+        // echo "get",PHP_EOL;
         require_once "./controller/GetHandler.php";
         $handler = new \xinda\recruit\controller\GetHandler($action,$resource);
         if(in_array($resource,$admin)){
@@ -145,7 +147,7 @@ switch ($method) {
 
         }else{
             if(method_exists($handler,$resource)){
-                echo 403,PHP_EOL;
+                // echo 403,PHP_EOL;
                 // echo $handler->call_user_func($resource);  
                 call_user_func(array($handler, $resource));
   
@@ -160,11 +162,13 @@ switch ($method) {
         }
 
         break;
-    case 'put':
-        require_once "./controller/GetHandler.php";
-        $handler = new \xinda\recruit\controller\GetHandler($action,$resource);
+    case 'post':
+        require_once "./controller/PostHandler.php";
+
+        // exit($action);
+        $handler = new \xinda\recruit\controller\PostHandler($action,$resource);
         // $handler->call_user_func($resource);
-        $handler->put();
+        $handler->receive();
 
     default:
         # code...

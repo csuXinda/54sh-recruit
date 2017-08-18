@@ -1,7 +1,7 @@
 <?php
 namespace xinda\recruit\model;
 
-defined('PATH') OR exit('invalid path');
+// defined('PATH') OR exit('invalid path');
 
 require_once dirname(__FILE__).'/../vendor/autoload.php';
 require_once dirname(__FILE__).'/../config/config.php';
@@ -53,20 +53,20 @@ class DB{
 
 // $pdo  = DB::getInstance(DSN,DB_USER,DB_PWD);
 
-// // $pdo = new Database(DSN,DB_USER,DB_PWD);
+// // // $pdo = new Database(DSN,DB_USER,DB_PWD);
 
-
-// $selectStatement = $pdo->select(array('AVG(age)'))->from('employee');
-// $selectStatement->where('age','=', 20)->where('sex','=','m' );
+// // $name = 'name';
+// $selectStatement = $pdo->select(array('COUNT(depart1),COUNT(depart2)'))->from('resume');
+// // $selectStatement->where('name','=','小')->orWhere('name','=','大' );
 // echo $selectStatement;
-// $insertStatement = $pdo->insert(array(0=>'id', 1=>'usr',2=>'pwd'))
-//                        ->into('users')
-//                        ->values(array(1234, 'your_username', 'your_password'));
+// // $insertStatement = $pdo->insert(array(0=>'id', 1=>'usr',2=>'pwd'))
+// //                        ->into('users')
+// //                        ->values(array(1234, 'your_username', 'your_password'));
 
 
 
-// echo $insertStatement;
+// // echo $insertStatement;
 // $stmt = $selectStatement->execute();
-// $data = $stmt->fetchall();
+// $data = $stmt->rowCount();
 // var_dump($data);  
 

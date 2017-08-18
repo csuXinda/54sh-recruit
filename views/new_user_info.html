@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="theme-color" content="#03a9f4">
+    <meta name="description" content="由升华网提供的中南大学社团招新平台">
+    <meta name="author" content="中南小团子">
+    <meta name="keywords" content="中南大学,升华网,招新">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link rel="stylesheet" type="text/css" href="asset/css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="asset/css/shhr.css" />
+    <style>
+        .aui-list-item{
+            border: solid 1px white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<header class="aui-bar aui-bar-nav">
+    <a class="aui-pull-left aui-btn" onclick="back()">
+        <span class="aui-iconfont aui-icon-left"></span>
+    </a>
+    <div class="aui-title">个人信息</div>
+</header>
+<div class="aui-tips" id="tips">
+    <i class="aui-iconfont aui-icon-info"></i>
+    <div class="aui-tips-title">提示:个人信息请如实认真填写</div>
+    <i class="aui-iconfont aui-icon-close" onclick="closeTips()"></i>
+</div>
+<form action="">
+    <div class="aui-content aui-margin-t-15 aui-margin-l-10 aui-margin-r-10">
+        <ul class="aui-list aui-form-list">
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        姓名
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input name="name" id="name" type="text" placeholder="姓名">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        学号
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input name="student_id" id="student_id" type="text" placeholder="学号">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        性别
+                    </div>
+                    <div class="aui-list-item-input">
+                        <label><input class="aui-radio" type="radio" name="sex" id="sex1" value=0 checked>男</label>
+                        <label><input class="aui-radio" type="radio" name="sex" id="sex2" value=1>女</label>
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        电话
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input name="phone" id="phone" type="text" placeholder="电话">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        出生日期
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input name="born" id="born" type="date">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        学院
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input id="college" name="college" type="text" placeholder="学院">
+                    </div>
+                </div>
+            </li>
+            <li class="aui-list-item">
+                <div class="aui-list-item-inner">
+                    <div class="aui-list-item-label">
+                        班级
+                    </div>
+                    <div class="aui-list-item-input">
+                        <input name="class" id="class" type="text" placeholder="班级">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</form>
+<div class="aui-content-padded">
+    <div class="aui-btn aui-btn-block" id="submit">请先填写所有信息</div>
+</div>
+</body>
+<script src="asset/script/zepto.min.js"></script>
+<script src="asset/script/api.js"></script>
+<script src="asset/script/aui-dialog.js"></script>
+<script>
+    //用tapmode代替click提升响应速度
+    apiready = function(){
+        api.parseTapmode();
+    };
+    var replace_url = 'http://localhost/recruit/index.php/insert/userInfo';//更新数据接收地址，请求数据为序列化表单
+    var data_url='http://localhost/recruit/index.php/userInfo';//已有数据获取地址，响应数据应为json字符串
+
+//    函数fill_in数据测试
+   // var test={'name':'alex','student_id':'110110110'};
+   // fill_in(test);
+
+    $.get(data_url,function (res) {
+            var info_obj;
+            info_obj=$.parseJSON(res);
+            if (info_obj.status===1)
+                fill_in(info_obj.message);
+            else{
+                //disabled
+                alert(info_obj.message);
+            }
+    });
+    function fill_in(array) {
+        for (var key in array){
+            $('#'+key).val(array[key]);
+        }
+    }
+
+//    input发生变化则校验数据是否填写完毕
+    $('input').bind('input propertychange', function() {
+        _counter=0;
+        $('input').each(function () {
+            if($(this).val()!=='')
+                _counter+=1;
+            if (_counter==8)
+                $('#submit').removeClass('aui-btn-default').addClass('aui-btn-primary').html('点击提交');
+            else
+                $('#submit').addClass('aui-btn-default').removeClass('aui-btn-primary').html('请先填写所有信息');
+        })
+    });
+    function warn(elem) {
+        elem.parent().parent().parent('.aui-list-item').css('border-color','#03a9f4');
+    }
+    function cancel_warn(elem) {
+        elem.parent().parent().parent('.aui-list-item').css('border-color','white');
+    }
+    //检查数据基础特征
+    function check(elem,min_len,max_len) {
+        len=elem.val().length;
+        if(len&&len<=max_len&&len>=min_len){
+           cancel_warn(elem);
+           return true;
+        }
+        else{
+            warn(elem);
+            return false;
+        }
+    }
+    //回退时先检查是否填写表单，若已填写则先警告再回退
+    function back() {
+        if ($('input').val()){
+            var dialog = new auiDialog({});
+            dialog.alert({
+                title:"提示",
+                msg:'退出后表单内容将不保留,是否确定',
+                buttons:['取消','确定']
+            },function(ret){
+                if(ret.buttonIndex==2)
+                    window.history.back();
+            })
+        }else
+            window.history.back();
+    }
+    function closeTips() {
+        $('#tips').hide('fast');
+    }
+    //上传数据
+    $('#submit').bind('click',function () {
+        if ($(this).attr('class').indexOf('primary')>=0){
+            if (check($('#student_id'),7,12))
+                if (check($('#phone'),7,11))
+                    $.post(replace_url,$('form').serialize(),function (res,status) {
+                        if (status=='success'){
+//                            根据返回结果res进行一些操作
+                            info_obj=$.parseJSON(res);
+                            alert(info_obj.message);
+                        }
+                    })
+        }
+    });
+</script>
+</html>
